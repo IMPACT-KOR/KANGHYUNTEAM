@@ -64,8 +64,8 @@ try:
         )
         print("로그인 필드 찾기 완료")
 
-        username_input.send_keys('id@gmail.com') #여기 채우기!!!
-        password_input.send_keys('pw') #여기 채우기!!!
+        username_input.send_keys('id@gmail.com') # 여기에 실제 이메일을 입력
+        password_input.send_keys('pw') # 여기에 실제 비밀번호를 입력
 
         # 로그인 버튼 클릭
         print("로그인 버튼 클릭 중...")
@@ -93,9 +93,50 @@ try:
         print("로그인 필드 찾기 또는 로그인 버튼 클릭 실패:", e)
         driver.save_screenshot('/Users/myo/Desktop/Kangs/login_field_error.png')
 
-    # 페이지 상태 확인 후 브라우저를 수동으로 종료하도록 안내
-    print("페이지 상태 확인 중... 대기합니다.")
-    print("코드 실행 완료. 브라우저를 수동으로 종료하세요.")
-    time.sleep(60)  # 60초 대기
+    # 검색창에 논문 제목 입력
+    print("검색창에 논문 제목 입력 중...")
+    try:
+        search_box = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, 'searchText'))
+        )
+        search_box.send_keys('Immunosuppressive therapy for IgA nephropathy in children')
+        search_box.submit()
+        
+        # 논문 클릭
+        print("논문 클릭 중...")
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href*="10.1002/14651858.CD015060.pub2/full"]'))
+        ).click()
+
+        # PICO 섹션 로딩 대기
+        print("PICO 섹션 로딩 대기 중...")
+        WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.ID, 'pico'))
+        )
+
+        # PICO 데이터 추출
+        pico_section = driver.find_element(By.ID, 'pico')
+
+        def extract_pico_data(pico_section):
+            def extract_pico_category(category):
+                elements = pico_section.find_elements(By.CSS_SELECTOR, f'div.pico-column.{category.lower()} a.pico-link-{category.lower()}')
+                return [elem.text for elem in elements]
+
+            data = {
+                'Population': extract_pico_category('Population'),
+                'Intervention': extract_pico_category('Intervention'),
+                'Comparison': extract_pico_category('Comparison'),
+                'Outcome': extract_pico_category('Outcome')
+            }
+            return data
+
+        pico_data = extract_pico_data(pico_section)
+        print("PICO 데이터:", pico_data)
+
+    except Exception as e:
+        print("검색 또는 PICO 데이터 추출 실패:", e)
+        driver.save_screenshot('/Users/myo/Desktop/Kangs/pico_data_error.png')
+
 finally:
+    # 브라우저 종료
     driver.quit()
