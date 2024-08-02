@@ -5,7 +5,11 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
+import pandas as pd
 import time
+
+# CSV 파일에 저장할 데이터를 보관할 리스트
+pico_data_list = []
 
 # Chrome 옵션 설정
 chrome_options = Options()
@@ -35,8 +39,8 @@ try:
         driver.execute_script("arguments[0].scrollIntoView(true);", sign_in_button)
         time.sleep(1)
 
-        # JavaScript를 사용하여 클릭
-        driver.execute_script("arguments[0].click();", sign_in_button)
+        # ActionChains를 사용하여 클릭
+        ActionChains(driver).move_to_element(sign_in_button).click().perform()
         print("로그인 버튼 클릭 완료")
     except Exception as e:
         print("로그인 버튼 클릭 실패:", e)
@@ -64,8 +68,8 @@ try:
         )
         print("로그인 필드 찾기 완료")
 
-        username_input.send_keys('id@gmail.com') # 여기에 실제 이메일을 입력
-        password_input.send_keys('pw') # 여기에 실제 비밀번호를 입력
+        username_input.send_keys('oilofmynose@gmail.com')  # 여기에 실제 이메일을 입력
+        password_input.send_keys('123123a!')  # 여기에 실제 비밀번호를 입력
 
         # 로그인 버튼 클릭
         print("로그인 버튼 클릭 중...")
@@ -77,8 +81,8 @@ try:
             driver.execute_script("arguments[0].scrollIntoView(true);", login_button)
             time.sleep(1)
 
-            # JavaScript를 사용하여 클릭
-            driver.execute_script("arguments[0].click();", login_button)
+            # ActionChains를 사용하여 클릭
+            ActionChains(driver).move_to_element(login_button).click().perform()
             print("로그인 버튼 클릭 완료")
 
             # 로그인 후 리디렉션 확인
@@ -108,14 +112,25 @@ try:
             EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href*="10.1002/14651858.CD015060.pub2/full"]'))
         ).click()
 
-        # PICO 섹션 로딩 대기
-        print("PICO 섹션 로딩 대기 중...")
-        WebDriverWait(driver, 30).until(
-            EC.presence_of_element_located((By.ID, 'pico'))
+        # PICO 탭 클릭
+        print("PICO 탭 클릭 중...")
+        pico_tab = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'a[href*="#pico"]'))
         )
+        driver.execute_script("arguments[0].scrollIntoView(true);", pico_tab)
+        time.sleep(1)
+        pico_tab.click()
+
+        # PICO 섹션 열기
+        print("PICO 섹션 열기 중...")
+        WebDriverWait(driver, 30).until(
+            EC.visibility_of_element_located((By.CSS_SELECTOR, 'i.fa-caret-up.section-collapse-icon'))
+        ).click()
 
         # PICO 데이터 추출
-        pico_section = driver.find_element(By.ID, 'pico')
+        pico_section = WebDriverWait(driver, 30).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, 'div.pico-table'))
+        )
 
         def extract_pico_data(pico_section):
             def extract_pico_category(category):
@@ -131,7 +146,10 @@ try:
             return data
 
         pico_data = extract_pico_data(pico_section)
-        print("PICO 데이터:", pico_data)
+        print("PICO 데이터 추출 완료:", pico_data)
+
+        # PICO 데이터를 리스트에 추가
+        pico_data_list.append(pico_data)
 
     except Exception as e:
         print("검색 또는 PICO 데이터 추출 실패:", e)
@@ -140,3 +158,10 @@ try:
 finally:
     # 브라우저 종료
     driver.quit()
+
+# 추출한 데이터를 CSV 파일로 저장
+df = pd.DataFrame(pico_data_list)
+df.to_csv('pico_data.csv', index=False)
+print("CSV 파일로 저장 완료: pico_data.csv")
+
+
