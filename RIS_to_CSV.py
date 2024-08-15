@@ -1,7 +1,7 @@
 """Convert RIS to CSV."""
 
 # Instructions for users!!
-# Purpose of this code is to convert all .ris directory in /RIS folder into .csv files, and save to /CSV directory.
+# Purpose of this code is to convert all .ris files in /RIS directory into .csv files, and save to /CSV directory.
 # /RIS and /CSV directory should be in a same directory.
 # This code (RIS_to_CSV.py) and database (RIS_stds.csv) should be in a same directory.
 # Path to /RIS directory should be set according to the user. It's at the very bottom of this code.
