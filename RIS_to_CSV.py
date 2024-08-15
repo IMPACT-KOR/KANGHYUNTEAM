@@ -1,10 +1,21 @@
 """Convert RIS to CSV."""
 
+# Instructions for users!!
+# Purpose of this code is to convert all .ris directory in /RIS folder into .csv files, and save to /CSV directory.
+# /RIS and /CSV directory should be in a same directory.
+# This code (RIS_to_CSV.py) and database (RIS_stds.csv) should be in a same directory.
+# Path to /RIS directory should be set according to the user. It's at the very bottom of this code.
+
+# 사용자를 위한 안내
+# 이 코드는 /RIS 디렉토리 안에 있는 모든 .ris 파일을 .csv로 변환한 후 /CSV 디렉토리에 저장합니다.
+# /RIS와 /CSV 디렉토리는 같은 디렉토리 안에 있어야 합니다.
+# 이 코드(RIS_to_CSV.py)와 database(RIS_stds.csv)는 같은 디렉토리 안에 있어야 합니다. (/RIS, /CSV 와는 무관)
+# /RIS 디렉토리의 경로를 설정해야 합니다. 이 코드 맨 아래쪽에 있습니다. (대략 Line 150)
+
 import sys, os
 import glob
 import csv
 import re
-
 
 def test_ris_file_exists(ris_path):
     """Test if an RIS file exists.
@@ -71,7 +82,7 @@ def main(ris_path, csv_path): # pylint: disable=R0914
             std_path = application_path2 + "/RIS_stds.csv"
             ris_std = open(std_path, 'r', encoding = 'utf-8')
     else:
-        print("here3")
+        # print("here3")
         application_path = os.path.dirname(os.path.abspath(__file__))
         std_path = application_path + "/RIS_stds.csv"
         ris_std = open(std_path, 'r', encoding = 'utf-8')
@@ -135,7 +146,7 @@ if __name__ == "__main__":
     print("Welcome to the RIS>CSV Converter.")
 
     # Specify the directory of RIS
-    # Paths should be modified according to the user
+    # Paths should be set according to the user
     ris_directory = r"C:\Users\vit62\OneDrive\문서\김동우\ASRI\RIS"
 
     # Get a list of all files in ris_directory
