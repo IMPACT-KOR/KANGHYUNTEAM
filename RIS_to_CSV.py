@@ -2,15 +2,15 @@
 
 # Instructions for users!!
 # Purpose of this code is to convert all .ris files in /RIS directory into .csv files, and save to /CSV directory.
-# /RIS and /CSV directory should be in a same directory.
+# /RIS and /CSV directories should be in a same directory.
 # This code (RIS_to_CSV.py) and database (RIS_stds.csv) should be in a same directory.
-# Path to /RIS directory should be set according to the user. Variable: 'ris_directory'
+# Path to /RIS directory should be set according to the user. (Variable: ris_directory)
 
 # 사용자를 위한 안내
 # 이 코드는 /RIS 디렉토리 안에 있는 모든 .ris 파일을 .csv로 변환한 후 /CSV 디렉토리에 저장합니다.
 # /RIS와 /CSV 디렉토리는 같은 디렉토리 안에 있어야 합니다.
 # 이 코드(RIS_to_CSV.py)와 database(RIS_stds.csv)는 같은 디렉토리 안에 있어야 합니다. (/RIS, /CSV 와는 무관)
-# /RIS 디렉토리의 경로를 설정해야 합니다. 이 코드 맨 아래쪽에 있습니다. (변수명: ris_directory, 대략 Line 150)
+# /RIS 디렉토리의 경로를 설정해야 합니다. 이 코드 맨 아래쪽에 있습니다. (변수명: ris_directory)
 
 import sys, os
 import glob
@@ -42,21 +42,6 @@ def blank_row():
     for i in range(0, 81, 1):  # pylint: disable=W0612
         row.append(None)
     return row
-
-def get_csv_path():
-    print("""
-    Please enter the relative or full path to the location you would like your 
-    new csv saved, as well as the filename for the new csv file. 
-    
-    Eg. "~/Documents/ris_report.csv" (without the quotation marks)
-          """)
-    csv_path = input("> ")
-    if csv_path.endswith(".csv"):
-        return csv_path
-    else:
-        print("Please end your path designation with '.csv'.")
-        csv_path = get_csv_path()
-        return csv_path
 
 def main(ris_path, csv_path): # pylint: disable=R0914
     """Open RIS file, take data, convert to CSV using REGEX."""
